@@ -445,6 +445,28 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
   // for (subexpr, symbol) in cache:
   //   symex_assign_simple_symbol(symbol, subexpr)
   //
+
+  for(auto it = expr.depth_begin(); it != expr.depth_end(); ++it)
+  {
+    if(it->id() == ID_dereference)
+    {
+      auto cached = state.common_subexpression_cache.lookup(*it);
+      if(!cached.has_value())
+      {
+        // TODO replace with actual symbol synthesis
+        // Find a nice way to represent the idea of "*p"
+
+        // STOLEN from symex_clean_expr
+        exprt::operandst guard;
+        const symbol_exprt &new_symbol = symbol_tablet{}.lookup_ref("new_symbol");
+        state.common_subexpression_cache.add(new_symbol, *it);
+        symex_assignt assign{};
+        assign.assign_symbol(new_symbol, expr_skeletont{}, *it, guard);
+        cached = new_symbol;
+      }
+      it.mutate() = *cached;
+    }
+  }
   // Note that a normal assign can have forms like:
   // a[x] = or p->z = ...
   // this function is only called for assignments of the form

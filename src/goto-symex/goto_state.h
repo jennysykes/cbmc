@@ -17,8 +17,20 @@ Author: Romain Brenguier, romain.brenguier@diffblue.com
 #include <analyses/guard.h>
 #include <analyses/local_safe_pointers.h>
 #include <pointer-analysis/value_set.h>
+#include <functional>
 
 #include "renaming_level.h"
+
+/// A structure for common subexpression cashe.
+/// 20210119 Empty, TODO implement this API
+struct common_subexpression_cachet {
+  public:
+  void add(symbol_exprt new_cache_symbol, exprt cached_subexpr);
+  optionalt<const symbol_exprt&> lookup(const exprt &possibly_cached_subexpr) const;
+  void evict(const symbol_exprt& expr);
+  void evict_all();
+  void for_each_cached_subexpr(const std::function<void(const symbol_exprt &, const exprt &)> &body) const;
+};
 
 /// Container for data that varies per program point, e.g. the constant
 /// propagator state, when state needs to branch. This is copied out of
@@ -41,6 +53,9 @@ public:
 
   /// Uses level 1 names, and is used to do dereferencing
   value_sett value_set;
+
+  /// A cache for common subexpressions that are held and refreshed
+  common_subexpression_cachet common_subexpression_cache;
 
   // A guard is a particular condition that has to pass for an instruction
   // to be executed. The easiest example is an if/else: each instruction along
@@ -83,7 +98,8 @@ public:
   goto_statet(const goto_statet &other) = default;
   goto_statet(goto_statet &&other) = default;
 
-  explicit goto_statet(const class goto_symex_statet &s);
+  // FIXME: this seems pointless and also not implemented
+  // explicit goto_statet(const class goto_symex_statet &s);
 
   explicit goto_statet(guard_managert &guard_manager)
     : guard(true_exprt(), guard_manager), reachable(true)
