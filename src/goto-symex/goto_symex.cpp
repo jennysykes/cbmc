@@ -38,6 +38,9 @@ void goto_symext::do_simplify(exprt &expr)
 
 void goto_symext::symex_assign(statet &state, const code_assignt &code)
 {
+  // common_subexpression_elimination.invalidate_cache();
+  // Alternative?
+  // remove_cache_keys(lhs)
   exprt lhs = clean_expr(code.lhs(), state, true);
   exprt rhs = clean_expr(code.rhs(), state, false);
 

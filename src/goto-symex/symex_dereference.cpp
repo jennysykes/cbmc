@@ -398,6 +398,34 @@ apply_to_objects_in_dereference(exprt e, const std::function<exprt(exprt)> &f)
 ///    See \ref auto_objects.cpp for details.
 void goto_symext::dereference(exprt &expr, statet &state, bool write)
 {
+  // 20210118 HS & TGW - IDEAS AND NOTES:
+  //
+  // (p->x && p->y && p->z)
+  // -> (let p_deref = *p in p_deref.x && p_deref.y && p_deref.z)
+  //
+  // ^- above might be doable, but I am not sure if we are allowed to generate
+  // let expressions here; It's possible that these need to be converted to
+  // assignment expressions before we get here.
+  //
+  // Below is the more general case, but we can't simply achieve this without
+  // caching
+  // Also not completely sure we can achieve this behaviour from this point
+  // (probably, but not quite sure how)
+  //
+  // BEGIN
+  // ASSIGN p_x := p->x
+  // ASSIGN i := j
+  // ASSIGN p_y = p->y
+  // END
+  //
+  // BEGIN
+  // ASSIGN p_deref := *p
+  // ASSIGN p_x := p_deref.x
+  // ASSIGN i := j           -- important open question: How do we decide which of these leads us to invalidate cache?
+  //                         -- (better phrasing: Which do *not* lead us to invalidate cache, to be on the safe side we should invalidate cache by default)
+  //                         -- naive answer, invalidate cache on write/pass to function as writable, or end of scope?
+  // ASSIGN p_y = p_deref.y
+  // END
   PRECONDITION(!state.call_stack().empty());
 
   // Symbols whose address is taken need to be renamed to level 1
@@ -407,6 +435,22 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
     return state.field_sensitivity.apply(
       ns, state, state.rename<L1>(std::move(e), ns).get(), false);
   });
+
+  // cache = {}
+  // depth first iteration by sub_expr through expr:
+  //   if subexpr.id() == ID_dereference:
+  //   if !cache.has_key?(subexpr):
+  //     cache += (subexpr, new_symbol(subexpr.type()))
+  //   sub_expr = cache[subexpr]
+  // for (subexpr, symbol) in cache:
+  //   symex_assign_simple_symbol(symbol, subexpr)
+  //
+  // Note that a normal assign can have forms like:
+  // a[x] = or p->z = ...
+  // this function is only called for assignments of the form
+  // x =
+  // or maybe explicitly new symbols such as
+  // some_type symbol =
 
   // start the recursion!
   dereference_rec(expr, state, write);
