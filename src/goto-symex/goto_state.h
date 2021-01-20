@@ -99,7 +99,8 @@ public:
   goto_statet(goto_statet &&other) = default;
 
   // FIXME: this seems pointless and also not implemented
-  // explicit goto_statet(const class goto_symex_statet &s);
+  // 20210120 This is used... see goto_state.h line 111
+  explicit goto_statet(const class goto_symex_statet &s);
 
   explicit goto_statet(guard_managert &guard_manager)
     : guard(true_exprt(), guard_manager), reachable(true)
