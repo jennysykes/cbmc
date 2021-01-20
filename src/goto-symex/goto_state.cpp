@@ -10,7 +10,40 @@ Author: Romain Brenguier, romain.brenguier@diffblue.com
 #include "goto_symex_is_constant.h"
 #include "goto_symex_state.h"
 
+#include <algorithm>
+
 #include <util/format_expr.h>
+
+void common_subexpression_cachet::add(symbol_exprt new_cache_symbol, exprt cached_subexpr)
+{
+  cache.emplace(cached_subexpr, new_cache_symbol);
+}
+
+optionalt<symbol_exprt> common_subexpression_cachet::lookup(const exprt &possibly_cached_subexpr) const
+{
+  auto it = cache.find(possibly_cached_subexpr);
+  if(it != cache.end()) {
+    return {it->second};
+  } else {
+    return {};
+  }
+}
+
+void common_subexpression_cachet::evict(const symbol_exprt &expr) {
+  cache.erase(expr);
+}
+
+void common_subexpression_cachet::evict_all()
+{
+  cache = cachet{};
+}
+
+void common_subexpression_cachet::for_each_cached_subexpr(const std::function<void(const symbol_exprt &, const exprt &)> &body) const
+{
+  std::for_each(cache.begin(), cache.end(), [&body](const cachet::value_type& key_value) {
+    body(key_value.second, key_value.first);
+  });
+}
 
 /// Print the constant propagation map in a human-friendly format.
 /// This is primarily for use from the debugger; please don't delete me just

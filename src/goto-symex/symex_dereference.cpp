@@ -19,10 +19,13 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/expr_util.h>
 #include <util/invariant.h>
 #include <util/pointer_offset_size.h>
+#include <util/fresh_symbol.h>
 
 #include <pointer-analysis/value_set_dereference.h>
 
 #include "symex_dereference_state.h"
+#include "symex_assign.h"
+#include "expr_skeleton.h"
 
 /// Transforms an lvalue expression by replacing any dereference operations it
 /// contains with explicit references to the objects they may point to (using
@@ -217,11 +220,11 @@ void goto_symext::dereference_rec(exprt &expr, statet &state, bool write)
       }
     }
 
-    exprt tmp1;
-    tmp1.swap(to_dereference_expr(expr).pointer());
+    exprt dereferenced_pointer;
+    dereferenced_pointer.swap(to_dereference_expr(expr).pointer());
 
     // first make sure there are no dereferences in there
-    dereference_rec(tmp1, state, false);
+    dereference_rec(dereferenced_pointer, state, false);
 
     // Depending on the nature of the pointer expression, the recursive deref
     // operation might have introduced a construct such as
@@ -230,7 +233,7 @@ void goto_symext::dereference_rec(exprt &expr, statet &state, bool write)
     // (x == &o1 ? o1..field : o2..field). value_set_dereferencet can then
     // apply the dereference operation to each of o1..field and o2..field
     // independently, as it special-cases the ternary conditional operator.
-    // There may also be index operators in tmp1 which can now be resolved to
+    // There may also be index operators in dereferenced_pointer which can now be resolved to
     // constant array cell references, so we replace symbols with constants
     // first, hoping for a transformation such as
     // (x == &o1 ? o1 : o2)[idx] =>
@@ -240,20 +243,20 @@ void goto_symext::dereference_rec(exprt &expr, statet &state, bool write)
     // value-set works in terms of L1 names and we don't want to ask it to
     // dereference an L2 pointer, which it would not have an entry for.
 
-    tmp1 = state.rename<L1_WITH_CONSTANT_PROPAGATION>(tmp1, ns).get();
+    dereferenced_pointer = state.rename<L1_WITH_CONSTANT_PROPAGATION>(dereferenced_pointer, ns).get();
 
-    do_simplify(tmp1);
+    do_simplify(dereferenced_pointer);
 
     if(symex_config.run_validation_checks)
     {
       // make sure simplify has not re-introduced any dereferencing that
       // had previously been cleaned away
       INVARIANT(
-        !has_subexpr(tmp1, ID_dereference),
+        !has_subexpr(dereferenced_pointer, ID_dereference),
         "simplify re-introduced dereferencing");
     }
 
-    tmp1 = state.field_sensitivity.apply(ns, state, std::move(tmp1), false);
+    dereferenced_pointer = state.field_sensitivity.apply(ns, state, std::move(dereferenced_pointer), false);
 
     // we need to set up some elaborate call-backs
     symex_dereference_statet symex_dereference_state(state, ns);
@@ -266,12 +269,12 @@ void goto_symext::dereference_rec(exprt &expr, statet &state, bool write)
       expr_is_not_null,
       log);
 
-    // std::cout << "**** " << format(tmp1) << '\n';
-    exprt tmp2 =
-      dereference.dereference(tmp1, symex_config.show_points_to_sets);
+    // std::cout << "**** " << format(dereferenced_pointer) << '\n';
+    exprt dereference_result =
+      dereference.dereference(dereferenced_pointer, symex_config.show_points_to_sets);
     // std::cout << "**** " << format(tmp2) << '\n';
 
-    expr.swap(tmp2);
+    expr.swap(dereference_result);
 
     // this may yield a new auto-object
     trigger_auto_object(expr, state);
@@ -458,10 +461,22 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
 
         // STOLEN from symex_clean_expr
         exprt::operandst guard;
-        const symbol_exprt &new_symbol = symbol_tablet{}.lookup_ref("new_symbol");
+        symbol_exprt new_symbol = get_fresh_aux_symbol(
+          it->type(),
+          "::cached_dereference",
+          "",
+          source_locationt{},
+           ID_C, state.symbol_table).symbol_expr();
         state.common_subexpression_cache.add(new_symbol, *it);
-        symex_assignt assign{};
-        assign.assign_symbol(new_symbol, expr_skeletont{}, *it, guard);
+        symex_assignt assign{
+          state,
+          symex_targett::assignment_typet::HIDDEN,
+          ns,
+          symex_config,
+          target
+        };
+        assign.assign_symbol(
+          to_ssa_expr(state.rename<L1>(new_symbol, ns).get()), expr_skeletont{}, *it, guard);
         cached = new_symbol;
       }
       it.mutate() = *cached;
@@ -480,6 +495,12 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
   // (like __CPROVER_memory)
   expr = state.rename<L1>(std::move(expr), ns).get();
 
+  // (*x).field (*x) => put in cache as x_deref#1
+  // (*x) => oh hey we've already seen that => get x_deref#1 from cache
+  // (*(x+i))
+  // i = i + 1
+  // x_deref = (x == &obj1 ? obj1 : x == &obj2 : obj2 : etc())
+  
   // Dereferencing is likely to introduce new member-of-if constructs --
   // for example, "x->field" may have become "(x == &o1 ? o1 : o2).field."
   // Run expression simplification, which converts that to

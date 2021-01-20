@@ -13,6 +13,7 @@ Author: Romain Brenguier, romain.brenguier@diffblue.com
 #define CPROVER_GOTO_SYMEX_GOTO_STATE_H
 
 #include <util/sharing_map.h>
+#include <unordered_map>
 
 #include <analyses/guard.h>
 #include <analyses/local_safe_pointers.h>
@@ -24,9 +25,11 @@ Author: Romain Brenguier, romain.brenguier@diffblue.com
 /// A structure for common subexpression cashe.
 /// 20210119 Empty, TODO implement this API
 struct common_subexpression_cachet {
+  using cachet = std::unordered_map<exprt, symbol_exprt, irep_hash>;
+  cachet cache;
   public:
   void add(symbol_exprt new_cache_symbol, exprt cached_subexpr);
-  optionalt<const symbol_exprt&> lookup(const exprt &possibly_cached_subexpr) const;
+  optionalt<symbol_exprt> lookup(const exprt &possibly_cached_subexpr) const;
   void evict(const symbol_exprt& expr);
   void evict_all();
   void for_each_cached_subexpr(const std::function<void(const symbol_exprt &, const exprt &)> &body) const;
