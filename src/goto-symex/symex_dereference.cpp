@@ -26,6 +26,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "symex_dereference_state.h"
 #include "symex_assign.h"
 #include "expr_skeleton.h"
+// 20210121 TGW For debugging
+#include <iostream>
 
 /// Transforms an lvalue expression by replacing any dereference operations it
 /// contains with explicit references to the objects they may point to (using
@@ -454,6 +456,13 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
     if(it->id() == ID_dereference)
     {
       auto cached = state.common_subexpression_cache.lookup(*it);
+      int cache_size = state.common_subexpression_cache.cache.size();
+      std::cout << "Cache (of size " << cache_size << ") lookup result for: " << it->pretty() << '\n';
+      if (cached.has_value()) {
+        std::cout << "CACHE: Found" << '\n';
+      } else {
+        std::cout << "CACHE: Missed" << '\n';
+      }
       if(!cached.has_value())
       {
         // TODO replace with actual symbol synthesis
@@ -463,8 +472,8 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
         exprt::operandst guard;
         symbol_exprt new_symbol = get_fresh_aux_symbol(
           it->type(),
-          "::cached_dereference",
-          "",
+          "symex_dereference",
+          "cached_dereference",
           source_locationt{},
            ID_C, state.symbol_table).symbol_expr();
         state.common_subexpression_cache.add(new_symbol, *it);
@@ -476,8 +485,18 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
           target
         };
         assign.assign_symbol(
-          to_ssa_expr(state.rename<L1>(new_symbol, ns).get()), expr_skeletont{}, *it, guard);
+          to_ssa_expr(
+            state.rename<L1>(new_symbol, ns).get()), 
+            expr_skeletont{}, 
+            *it, 
+            guard);
         cached = new_symbol;
+        // DEBUG 20210122
+        //std::cout << "Processing derefence: " << it->pretty() << '\n';
+        std::cout << "Adding symbol: " << new_symbol.get_identifier() << '\n';
+
+      } else {
+        std::cout << "Cached value is: " << cached->get_identifier() << '\n';
       }
       it.mutate() = *cached;
     }
