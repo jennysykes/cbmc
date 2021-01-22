@@ -456,6 +456,7 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
     if(it->id() == ID_dereference)
     {
       auto cached = state.common_subexpression_cache.lookup(*it);
+      // DEBUG 20210122 TGW
       int cache_size = state.common_subexpression_cache.cache.size();
       std::cout << "Cache (of size " << cache_size << ") lookup result for: " << it->pretty() << '\n';
       if (cached.has_value()) {
@@ -463,6 +464,7 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
       } else {
         std::cout << "CACHE: Missed" << '\n';
       }
+      // END DEBUG 20210122
       if(!cached.has_value())
       {
         // TODO replace with actual symbol synthesis
@@ -497,6 +499,7 @@ void goto_symext::dereference(exprt &expr, statet &state, bool write)
 
       } else {
         std::cout << "Cached value is: " << cached->get_identifier() << '\n';
+        // END DEBUG 20210122, note the else is only for debugging do remove it
       }
       it.mutate() = *cached;
     }
