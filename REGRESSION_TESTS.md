@@ -8,8 +8,7 @@ COMPILING.md for details of both make and cmake build processes.)
 
 Note that running all regression tests can be slow when a non-
 release build of CPROVER is used. It is highly recommended to
-compile with `-DCMAKE_BUILD_TYPE=Release` before running
-regression tests.
+compile with release flags.
 
 # MAKE
 
@@ -21,6 +20,9 @@ make
 ```
 
 # CMAKE
+
+To build with release flags in cmake use
+`-DCMAKE_BUILD_TYPE=Release` as an argument to the cmake command.
 
 This can be done by changing to the directory you built the
 project in with cmake and running ctest as follows.
