@@ -255,10 +255,6 @@ require manual modification of build files.
    to generate IDE projects by supplying the `-G` flag.  Run `cmake -G` for a
    comprehensive list of supported back-ends.
 
-   Note that if you do not specify the `build` directory the current directory
-   will be the build target. This will modify many version controlled files
-   and be messy to fix.
-
    On macOS >10.14, the build will fail unless you explicitly specify
    the full path to the compiler. This issue is being tracked
    [here](https://github.com/diffblue/cbmc/issues/4956). The invocation thus
