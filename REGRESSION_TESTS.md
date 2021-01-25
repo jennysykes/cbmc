@@ -21,9 +21,6 @@ make
 
 # CMAKE
 
-To build with release flags in cmake use
-`-DCMAKE_BUILD_TYPE=Release` as an argument to the cmake command.
-
 This can be done by changing to the directory you built the
 project in with cmake and running ctest as follows.
 ```
