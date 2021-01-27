@@ -1,9 +1,9 @@
 This document provides a quick reference for how to compile the
-CPROVER project. Further details can be found in
-doc/architectural/compilation-and-development.md including details
-on: personal configurations, `DEBUG` macro, regression tests
-(with make, ctest/cmake, and `test.pl`), unit tests, test coverage,
-and alternative SAT solvers.
+CPROVER project. Further details on options can be found in
+[CPROVER Compilation and Development](http://cprover.diffblue.com/compilation-and-development.html)
+including details on: personal configurations, `DEBUG` macro,
+regression tests (with make, ctest/cmake, and `test.pl`), unit
+tests, test coverage, and alternative SAT solvers.
 
 
 # WHAT ARCHITECTURE?
