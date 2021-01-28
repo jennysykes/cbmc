@@ -70,7 +70,6 @@ This provides a way to access and invoke varoius forms of analysis.
 
 Documentation useful for this tool can be found:
 - [Analysis Information](http://cprover.diffblue.com/group__analyses.html)
-- 
 
 ## goto-cc (goto-gcc, goto-ld)
 
@@ -178,7 +177,13 @@ For further documentation and examples see
 
 ## smt2_solver
 
-To be documented.
+This is an (Satisfiability Modulo Theory) SMT solver that is shipped
+with CProver. The SMT solver here is built on top of a Satisfiability
+(SAT) solver. The `smt2+solver` is designer to work with files, and
+so can be called with a file argument.
+
+Details on the general use of solvers in CProver and some related
+information can be found [here](http://cprover.diffblue.com/group__solvers.html).
 
 ## symtab2gb
 
