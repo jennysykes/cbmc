@@ -179,7 +179,7 @@ For further documentation and examples see
 
 This is an (Satisfiability Modulo Theory) SMT solver that is shipped
 with CProver. The SMT solver here is built on top of a Satisfiability
-(SAT) solver. The `smt2+solver` is designer to work with files, and
+(SAT) solver. The `smt2_solver` is designer to work with files, and
 so can be called with a file argument.
 
 Details on the general use of solvers in CProver and some related
@@ -187,7 +187,12 @@ information can be found [here](http://cprover.diffblue.com/group__solvers.html)
 
 ## symtab2gb
 
-To be documented.
+This utility is to compile a cbmc symbols table (in JSON format) into a goto binary.
+For usage run
+```
+symtab2gb --help
+```
+
 
 ## unit
 
