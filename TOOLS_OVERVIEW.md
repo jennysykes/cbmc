@@ -66,10 +66,16 @@ development see:
 
 ## goto-analyzer
 
-This provides a way to access and invoke varoius forms of analysis.
+This provides a way to access and invoke various forms of analysis on
+C source files.
 
 Documentation useful for this tool can be found:
 - [Analysis Information](http://cprover.diffblue.com/group__analyses.html)
+
+Details of all the options can be seen by running
+```
+goto-analyzer --help
+```
 
 ## goto-cc (goto-gcc, goto-ld)
 
@@ -133,7 +139,16 @@ level overview and some example commands for `goto-instrument`.
 
 ## janalyzer
 
-Java version of `memory-analyzer`?
+This provides a way to access and invoke various forms of analysis on
+Java programs.
+
+Documentation useful for this tool can be found:
+- [Analysis Information](http://cprover.diffblue.com/group__analyses.html)
+
+Details of all the options can be seen by running
+```
+janalyzer --help
+```
 
 ## java-converter
 
@@ -141,7 +156,11 @@ Java version of converter/file_converter?
 
 ## java-unit
 
-Java version of unit?
+Runs Java unit tests. For more details use
+```
+java-unit --help
+```
+Default behaviour is to only show failed test cases.
 
 ## jbmc
 
@@ -149,9 +168,8 @@ Java version of cbmc.
 
 ## jdiff
 
-Java version of `goto-diff` designed for use on Java programs.
 Provides a variety of difference checks between two goto programs (produced
-by `XXXXXXXXXX`). This invokes some of the `jbmc` tools to convert the goto
+by `goto-cc`). This invokes some of the `cbmc` tools to convert the goto
 program and then determine which functions are added/removed/changed.
 
 Details of all the options can be seen by running
@@ -196,5 +214,9 @@ symtab2gb --help
 
 ## unit
 
-??????
+Runs C unit tests. For more details use
+```
+unit --help
+```
+Default behaviour is to only show failed test cases.
 
