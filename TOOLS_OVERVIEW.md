@@ -5,21 +5,21 @@ CProver project. The goal is as to provide a lightweight reference
 with links to detailed documentation on each of the tools.
 
 The tools in the CProver project are as follows:
-- cbmc
-- goto-analyzer
-- goto-cc (goto-gcc, goto-ld)
-- goto-diff
-- goto-harness
-- goto-instrument
-- janalyzer
-- java-unit
-- jbmc
-- jdiff
-- memory-analyzer
-- smt2_solver
-- symtab2gb
-- unit
-- converter, driver, file_converter, java-converter
+- [cbmc](#cbmc)
+- [goto-analyzer](#goto-analyzer)
+- [goto-cc (goto-gcc, goto-ld)](#goto-cc)
+- [goto-diff](#goto-diff)
+- [goto-harness](#goto-harness)
+- [goto-instrument](#goto-instrument)
+- [janalyzer](#janalyzer)
+- [java-unit](#java-unit)
+- [jbmc](#jbmc)
+- [jdiff](#jdiff)
+- [memory-analyzer](#memory-analyzer)
+- [smt2_solver](#smt2_solver)
+- [symtab2gb](#symtab2gb)
+- [unit](#unit)
+- [others (converter, driver, file_converter, java-converter)](#others)
 
 The rest of this document provides a section on each of these tools in alphabetical order.
 Most links to documentation here are to the CProver online documentation that can be
@@ -62,7 +62,7 @@ Details of all the options can be seen by running
 goto-analyzer --help
 ```
 
-## goto-cc (goto-gcc, goto-ld)
+## goto-cc
 
 This is a a compiler that also adds goto program information to the compiled
 programs. Note that `goto-cc` is the compiler and linker and `goto-gcc` and
@@ -222,7 +222,8 @@ unit --help
 Default behaviour is to only show failed test cases.
 
 
-## converter, driver, file_converter, java-converter
+## others
 
-These are build time utilities for other tools and not designed
+These (`converter`, `driver`, `file_converter`, `java-converter`)
+are build time utilities for other tools and not designed
 to be run independently.
