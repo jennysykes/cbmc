@@ -6,16 +6,12 @@ with links to detailed documentation on each of the tools.
 
 The tools in the CProver project are as follows:
 - cbmc
-- converter
-- driver
-- file_converter
 - goto-analyzer
 - goto-cc (goto-gcc, goto-ld)
 - goto-diff
 - goto-harness
 - goto-instrument
 - janalyzer
-- java-converter
 - java-unit
 - jbmc
 - jdiff
@@ -23,6 +19,7 @@ The tools in the CProver project are as follows:
 - smt2_solver
 - symtab2gb
 - unit
+- converter, driver, file_converter, java-converter
 
 The rest of this document provides a section on each of these tools in alphabetical order.
 Most links to documentation here are to the CProver online documentation that can be
@@ -51,18 +48,6 @@ For details on compiling, testing, contributing, and documentation related to
 development see:
 - [CProver Development Documentation](http://cprover.diffblue.com/index.html)
 
-
-## converter
-
-??????
-
-## driver
-
-??????
-
-## file_converter
-
-??????
 
 ## goto-analyzer
 
@@ -150,10 +135,6 @@ Details of all the options can be seen by running
 janalyzer --help
 ```
 
-## java-converter
-
-Java version of converter/file_converter?
-
 ## java-unit
 
 Runs Java unit tests. For more details use
@@ -161,6 +142,7 @@ Runs Java unit tests. For more details use
 java-unit --help
 ```
 Default behaviour is to only show failed test cases.
+
 
 ## jbmc
 
@@ -239,3 +221,8 @@ unit --help
 ```
 Default behaviour is to only show failed test cases.
 
+
+## converter, driver, file_converter, java-converter
+
+These are build time utilities for other tools and not designed
+to be run independently.
