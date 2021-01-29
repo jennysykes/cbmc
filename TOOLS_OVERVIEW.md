@@ -31,21 +31,21 @@ Most links to documentation here are to the CProver online documentation that ca
 
 ## cbmc
 
-The C Bounded Model Checker (cbmc) is the main tool used in the CProver suite.
-cbmc does the entire analysis from the source code through to the result,
+The C Bounded Model Checker (`cbmc`) is the main tool used in the CProver suite.
+`cbmc` does the entire analysis from the source code through to the result,
 including generating traces. This includes invoking various sub-tools and 
 modules.
 
-For details on usage of the cbmc tool see the following documentation
+For details on usage of the `cbmc` tool see the following documentation
 - [Developer Tutorial](http://cprover.diffblue.com/tutorial.html)
-includes a very brief tutorial on many aspects of cbmc and other tools.
+includes a very brief tutorial on many aspects of `cbmc` and other tools.
 
-For details on the architecture of the cbmc tool and how the analysis is performed
+For details on the architecture of the `cbmc` tool and how the analysis is performed
 see the following documents:
 - [CBMC Architecture](http://cprover.diffblue.com/cbmc-architecture.html)
-gives a high level overview of the cbmc architecture and data flow.
+gives a high level overview of the `cbmc` architecture and data flow.
 - [Background Concepts](http://cprover.diffblue.com/background-concepts.html)
-overviews all the key concepts used in the cbmc analysis.
+overviews all the key concepts used in the `cbmc` analysis.
 
 For details on compiling, testing, contributing, and documentation related to 
 development see:
@@ -164,7 +164,26 @@ Default behaviour is to only show failed test cases.
 
 ## jbmc
 
-Java version of cbmc.
+This is the main analysis engine the performs the analysis
+of Java files using bounded model checking. This is a
+Java version of the `cbmc` tool (more documentation for
+`cbmc` is available and much of it applies to `jbmc`
+since they use many of the same back end utilities).
+
+For a some light information on usage of the jbmc tool see the following documentation
+- [JBMC homepage](https://www.cprover.org/jbmc/) includes some
+simple examples and information.
+
+For details on how analysis is performed in the `cbmc` and
+`jbmc` tools see see the following documents:
+- [CBMC Architecture](http://cprover.diffblue.com/cbmc-architecture.html)
+gives a high level overview of the `cbmc` architecture and data flow that *should also apply to* `jbmc`.
+- [Background Concepts](http://cprover.diffblue.com/background-concepts.html)
+overviews all the key concepts used in the `jbmc` analysis.
+
+For details on compiling, testing, contributing, and documentation related to development see:
+- [CProver Development Documentation](http://cprover.diffblue.com/index.html)
+
 
 ## jdiff
 
